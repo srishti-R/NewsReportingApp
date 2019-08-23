@@ -21,23 +21,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A simple {@link } subclass.
  */
-public class Environment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>>, DownloadCallbacks {
+public class Environment extends Fragment implements DownloadCallbacks, LoaderManager.LoaderCallbacks<List<News>> {
     private static final String MAIN = "https://content.guardianapis.com/search?order-by=newest&page-size=10&show-fields=thumbnail&q=nature,environment&order-date=newspaper-edition&api-key=test";
     NewsAdapter adapter;
     View rootView;
     GridView grid;
-
+    ProgressBar bar;
     public Environment() {
         // Required empty public constructor
     }
@@ -55,7 +53,7 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
 
         List<News> newsList = new ArrayList<News>();
          grid = rootView.findViewById(R.id.grid);
-
+        bar=rootView.findViewById(R.id.progress_bar);
         adapter = new NewsAdapter(getActivity(), newsList);
         grid.setAdapter(adapter);
         registerForContextMenu(grid);
@@ -79,20 +77,19 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
         swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
             NetworkInfo info=getActiveNetworkInfo();
                 updateFromDownload(info);
-                Toast.makeText(getContext(), "No More Stories", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Refreshing..", Toast.LENGTH_SHORT).show();
                 swiper.setRefreshing(false);
             }
         });
 
         return rootView;
     }
-
-    @NonNull
     @Override
     public Loader<List<News>> onCreateLoader(int i, @Nullable Bundle bundle) {
-       // Uri baseUri = Uri.parse(GUARDIAN_ENV);
+        // Uri baseUri = Uri.parse(GUARDIAN_ENV);
 //        Uri.Builder uriBuilder = baseUri.buildUpon();
 
        /* uriBuilder.appendQueryParameter("format", "geojson");
@@ -102,14 +99,16 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
 
         return new EarthquakeLoader(this, uriBuilder.toString());
 */
-       //creates a custom loader
+        //creates a custom loader
         //@param context, url from where we want to load the news items
-       return new NewsLoader(getContext(), MAIN);
+        bar.setVisibility(View.VISIBLE);
+        return new NewsLoader(getContext(), MAIN);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<News>> loader, List<News> news) {
-    adapter.clear();
+        adapter.clear();
+        bar.setVisibility(View.GONE);
         if (news!= null && !news.isEmpty()) {
             adapter.addAll(news);
         }
@@ -117,8 +116,13 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoaderReset(@NonNull Loader<List<News>> loader) {
-    adapter.clear();
+        adapter.clear();
     }
+
+
+
+    @NonNull
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -142,7 +146,6 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
             Intent sendIntent=new Intent();
 
             sendIntent.setAction(Intent.ACTION_SEND);
-
             sendIntent.putExtra(Intent.EXTRA_TEXT, news.url);
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, "Share using.."));
@@ -163,20 +166,21 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
     public void updateFromDownload(NetworkInfo activeNetwork) {
         View v= rootView.findViewById(R.id.empty_view);
         if(activeNetwork == null || !activeNetwork.isConnected()){
-
+            bar.setVisibility(View.GONE);
 
 
             grid.setEmptyView(v);
 
 
         } if (activeNetwork != null) {
-
+            bar.setVisibility(View.GONE);
             LoaderManager loaderManager = LoaderManager.getInstance(this);
 
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
             loaderManager.initLoader(1, null, this);
+
         }
 
     }

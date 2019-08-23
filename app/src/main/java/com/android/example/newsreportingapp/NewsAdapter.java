@@ -1,17 +1,13 @@
 package com.android.example.newsreportingapp;
 
 import android.content.Context;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class NewsAdapter extends ArrayAdapter<News> {
@@ -30,7 +26,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
             gridViewItem = LayoutInflater.from(getContext()).inflate(R.layout.grid_item, parent, false);
 
         }
-       gridViewItem.setLongClickable(true);
+
         News recent = getItem(position);
 
 

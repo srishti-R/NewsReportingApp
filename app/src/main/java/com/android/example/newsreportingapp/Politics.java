@@ -6,16 +6,13 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.SearchView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -24,11 +21,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +33,7 @@ import java.util.List;
 public class Politics extends Fragment implements LoaderManager.LoaderCallbacks<List<News>>, DownloadCallbacks {
 private static final String POLITICS="https://content.guardianapis.com/search?order-by=newest&show-fields=thumbnail&page-size=10&q=politics&order-date=newspaper-edition&api-key=test";
     NewsAdapter adapter;
-
+    ProgressBar bar;
     View rootView;
     GridView grid;
 
@@ -59,7 +54,7 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
 
         List<News> newsList = new ArrayList<News>();
         grid = rootView.findViewById(R.id.grid);
-
+        bar=rootView.findViewById(R.id.progress_bar);
         adapter = new NewsAdapter(getActivity(), newsList);
         grid.setAdapter(adapter);
         registerForContextMenu(grid);
@@ -85,7 +80,7 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
             public void onRefresh() {
             NetworkInfo info=getActiveNetworkInfo();
             updateFromDownload(info);
-                Toast.makeText(getContext(), "No More Stories", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Refreshing..", Toast.LENGTH_SHORT).show();
                 swiper.setRefreshing(false);
             }
         });
@@ -108,11 +103,13 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
 */
         //creates a custom loader
         //@param context, url from where we want to load the news items
+        bar.setVisibility(View.VISIBLE);
         return new NewsLoader(getContext(), POLITICS);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<News>> loader, List<News> news) {
+       bar.setVisibility(View.GONE);
         adapter.clear();
         if (news!= null && !news.isEmpty()) {
             adapter.addAll(news);
@@ -169,13 +166,13 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
         View v= rootView.findViewById(R.id.empty_view);
         if(activeNetwork == null || !activeNetwork.isConnected()){
 
-
+            bar.setVisibility(View.GONE);
 
             grid.setEmptyView(v);
 
 
         } if (activeNetwork != null) {
-
+            bar.setVisibility(View.GONE);
             LoaderManager loaderManager = LoaderManager.getInstance(this);
 
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for

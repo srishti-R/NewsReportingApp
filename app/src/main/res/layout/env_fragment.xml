@@ -7,10 +7,12 @@
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
 <GridView
 android:id="@+id/grid"
 
@@ -30,5 +32,13 @@ android:verticalSpacing="6dp"/>
 
         ></include>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/empty_view"
+        android:visibility="visible"
+        />
 
 </RelativeLayout>
