@@ -16,7 +16,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -59,7 +62,7 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
 
         adapter = new NewsAdapter(getActivity(), newsList);
         grid.setAdapter(adapter);
-
+        registerForContextMenu(grid);
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -121,7 +124,36 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
         adapter.clear();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
 
+
+        if(v.getId()==R.id.grid){
+            MenuInflater inflater=getActivity().getMenuInflater();
+            inflater.inflate(R.menu.menu, menu);
+        }
+        menu.setHeaderIcon(R.drawable.ic_action_share);
+        menu.setHeaderTitle("Share this news with your friends");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        News news = (News) grid.getItemAtPosition(info.position);
+
+        if(item.getItemId()==R.id.share_news){
+
+            Intent sendIntent=new Intent();
+
+            sendIntent.setAction(Intent.ACTION_SEND);
+
+            sendIntent.putExtra(Intent.EXTRA_TEXT, news.url);
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Share using.."));
+        }
+        return super.onContextItemSelected(item);
+    }
 
     @Override
     public NetworkInfo getActiveNetworkInfo() {

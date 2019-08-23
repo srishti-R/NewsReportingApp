@@ -30,16 +30,17 @@ public class NewsAdapter extends ArrayAdapter<News> {
             gridViewItem = LayoutInflater.from(getContext()).inflate(R.layout.grid_item, parent, false);
 
         }
+       gridViewItem.setLongClickable(true);
         News recent = getItem(position);
 
 
-        TextView date = (TextView) gridViewItem.findViewById(R.id.date);
+        TextView date = gridViewItem.findViewById(R.id.date);
        date.setText(recent.date);
 
-        TextView headline = (TextView) gridViewItem.findViewById(R.id.headline);
+        TextView headline = gridViewItem.findViewById(R.id.headline);
         headline.setText(recent.headLine);
 
-        ImageView image=(ImageView)gridViewItem.findViewById(R.id.image);
+        ImageView image= gridViewItem.findViewById(R.id.image);
         image.setImageDrawable(recent.image);
         return gridViewItem;
 

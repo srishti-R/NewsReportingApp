@@ -13,7 +13,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +37,12 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
     NewsAdapter adapter;
     View rootView;
     GridView grid;
+
     public Environment() {
         // Required empty public constructor
     }
+
+
 
 
     @Override
@@ -51,7 +58,7 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
 
         adapter = new NewsAdapter(getActivity(), newsList);
         grid.setAdapter(adapter);
-
+        registerForContextMenu(grid);
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -63,6 +70,7 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
 
             }
         });
+
 
         NetworkInfo info=getActiveNetworkInfo();
        updateFromDownload(info);
@@ -80,7 +88,6 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
 
         return rootView;
     }
-
 
     @NonNull
     @Override
@@ -112,7 +119,36 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
     public void onLoaderReset(@NonNull Loader<List<News>> loader) {
     adapter.clear();
     }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
 
+
+        if(v.getId()==R.id.grid){
+            MenuInflater inflater=getActivity().getMenuInflater();
+            inflater.inflate(R.menu.menu, menu);
+        }
+        menu.setHeaderIcon(R.drawable.ic_action_share);
+        menu.setHeaderTitle("Share this news with your friends");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        News news = (News) grid.getItemAtPosition(info.position);
+
+        if(item.getItemId()==R.id.share_news){
+
+            Intent sendIntent=new Intent();
+
+            sendIntent.setAction(Intent.ACTION_SEND);
+
+            sendIntent.putExtra(Intent.EXTRA_TEXT, news.url);
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Share using.."));
+        }
+        return super.onContextItemSelected(item);
+    }
 
     @Override
     public NetworkInfo getActiveNetworkInfo() {
