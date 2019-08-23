@@ -28,10 +28,11 @@ import java.util.List;
 /**
  * A simple {@link } subclass.
  */
-public class Environment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
+public class Environment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>>, DownloadCallbacks {
     private static final String MAIN = "https://content.guardianapis.com/search?order-by=newest&page-size=10&show-fields=thumbnail&q=nature,environment&order-date=newspaper-edition&api-key=test";
     NewsAdapter adapter;
-
+    View rootView;
+    GridView grid;
     public Environment() {
         // Required empty public constructor
     }
@@ -41,12 +42,12 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.env_fragment, container, false);
+        rootView = inflater.inflate(R.layout.env_fragment, container, false);
 
 
 
         List<News> newsList = new ArrayList<News>();
-        GridView grid = rootView.findViewById(R.id.grid);
+         grid = rootView.findViewById(R.id.grid);
 
         adapter = new NewsAdapter(getActivity(), newsList);
         grid.setAdapter(adapter);
@@ -63,32 +64,15 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
             }
         });
 
-        ConnectivityManager cm =
-                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info=getActiveNetworkInfo();
+       updateFromDownload(info);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if(activeNetwork == null || !activeNetwork.isConnected()){
-
-       View v= rootView.findViewById(R.id.empty_view);
-
-           grid.setEmptyView(v);
-
-
-        } if (activeNetwork != null) {
-
-            LoaderManager loaderManager = LoaderManager.getInstance(this);
-
-            // Initialize the loader. Pass in the int ID constant defined above and pass in null for
-            // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
-            // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(1, null, this);
-        }
-
-        final SwipeRefreshLayout swiper=(SwipeRefreshLayout)rootView.findViewById(R.id.refresh);
+        final SwipeRefreshLayout swiper= rootView.findViewById(R.id.refresh);
         swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+            NetworkInfo info=getActiveNetworkInfo();
+                updateFromDownload(info);
                 Toast.makeText(getContext(), "No More Stories", Toast.LENGTH_SHORT).show();
                 swiper.setRefreshing(false);
             }
@@ -130,4 +114,41 @@ public class Environment extends Fragment implements LoaderManager.LoaderCallbac
     }
 
 
+    @Override
+    public NetworkInfo getActiveNetworkInfo() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork;
+    }
+
+    @Override
+    public void updateFromDownload(NetworkInfo activeNetwork) {
+        View v= rootView.findViewById(R.id.empty_view);
+        if(activeNetwork == null || !activeNetwork.isConnected()){
+
+
+
+            grid.setEmptyView(v);
+
+
+        } if (activeNetwork != null) {
+
+            LoaderManager loaderManager = LoaderManager.getInstance(this);
+
+            // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+            // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+            // because this activity implements the LoaderCallbacks interface).
+            loaderManager.initLoader(1, null, this);
+        }
+
+    }
+
+
+    @Override
+    public void finishDownloading() {
+        return;
+
+    }
 }

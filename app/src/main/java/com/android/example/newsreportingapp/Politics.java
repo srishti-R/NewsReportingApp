@@ -32,11 +32,12 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Politics extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
+public class Politics extends Fragment implements LoaderManager.LoaderCallbacks<List<News>>, DownloadCallbacks {
 private static final String POLITICS="https://content.guardianapis.com/search?order-by=newest&show-fields=thumbnail&page-size=10&q=politics&order-date=newspaper-edition&api-key=test";
     NewsAdapter adapter;
 
-
+    View rootView;
+    GridView grid;
 
 
 
@@ -49,12 +50,12 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
 
-        final View rootView = inflater.inflate(R.layout.env_fragment, container, false);
+        rootView = inflater.inflate(R.layout.env_fragment, container, false);
 
 
 
         List<News> newsList = new ArrayList<News>();
-        GridView grid = rootView.findViewById(R.id.grid);
+        grid = rootView.findViewById(R.id.grid);
 
         adapter = new NewsAdapter(getActivity(), newsList);
         grid.setAdapter(adapter);
@@ -71,38 +72,16 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
             }
         });
 
-        ConnectivityManager cm =
-                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if(activeNetwork == null || !activeNetwork.isConnected()){
-
-            View v= rootView.findViewById(R.id.empty_view);
-
-            grid.setEmptyView(v);
+       NetworkInfo info=getActiveNetworkInfo();
+       updateFromDownload(info);
 
 
-        } if (activeNetwork != null) {
-
-            LoaderManager loaderManager = LoaderManager.getInstance(this);
-
-            // Initialize the loader. Pass in the int ID constant defined above and pass in null for
-            // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
-            // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(1, null, this);
-           /* FragmentTransaction ft = getFragmentManager().beginTransaction();
-            if (Build.VERSION.SDK_INT >= 26) {
-                ft.setReorderingAllowed(false);
-            }
-            ft.detach(this).attach(this).commit();*/
-        }
-
-
-        final SwipeRefreshLayout swiper=(SwipeRefreshLayout)rootView.findViewById(R.id.refresh);
+        final SwipeRefreshLayout swiper= rootView.findViewById(R.id.refresh);
         swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+            NetworkInfo info=getActiveNetworkInfo();
+            updateFromDownload(info);
                 Toast.makeText(getContext(), "No More Stories", Toast.LENGTH_SHORT).show();
                 swiper.setRefreshing(false);
             }
@@ -144,6 +123,41 @@ private static final String POLITICS="https://content.guardianapis.com/search?or
 
 
 
+    @Override
+    public NetworkInfo getActiveNetworkInfo() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork;
+
+    }
+    @Override
+    public void updateFromDownload(NetworkInfo activeNetwork) {
+        View v= rootView.findViewById(R.id.empty_view);
+        if(activeNetwork == null || !activeNetwork.isConnected()){
+
+
+
+            grid.setEmptyView(v);
+
+
+        } if (activeNetwork != null) {
+
+            LoaderManager loaderManager = LoaderManager.getInstance(this);
+
+            // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+            // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+            // because this activity implements the LoaderCallbacks interface).
+            loaderManager.initLoader(1, null, this);
+        }
+    }
+
+
+    @Override
+    public void finishDownloading() {
+    return;
+    }
 }
 
 
