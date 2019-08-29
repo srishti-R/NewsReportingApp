@@ -36,6 +36,7 @@ public class Environment extends Fragment implements DownloadCallbacks, LoaderMa
     View rootView;
     GridView grid;
     ProgressBar bar;
+
     public Environment() {
         // Required empty public constructor
     }
@@ -54,6 +55,7 @@ public class Environment extends Fragment implements DownloadCallbacks, LoaderMa
         List<News> newsList = new ArrayList<News>();
          grid = rootView.findViewById(R.id.grid);
         bar=rootView.findViewById(R.id.progress_bar);
+
         adapter = new NewsAdapter(getActivity(), newsList);
         grid.setAdapter(adapter);
         registerForContextMenu(grid);
@@ -80,7 +82,7 @@ public class Environment extends Fragment implements DownloadCallbacks, LoaderMa
 
             NetworkInfo info=getActiveNetworkInfo();
                 updateFromDownload(info);
-                Toast.makeText(getContext(), "Refreshing..", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.refreshing), Toast.LENGTH_SHORT).show();
                 swiper.setRefreshing(false);
             }
         });
@@ -174,6 +176,7 @@ public class Environment extends Fragment implements DownloadCallbacks, LoaderMa
 
         } if (activeNetwork != null) {
             bar.setVisibility(View.GONE);
+
             LoaderManager loaderManager = LoaderManager.getInstance(this);
 
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for

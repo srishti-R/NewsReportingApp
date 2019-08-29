@@ -3,4 +3,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="noti_title">a lot has been happening..</string>
+    <string name="noti_body">Its been a while since you last visited your favourite app, quick take a look at what\'s happening round the globe</string>
+    <string name="noti_affirm">Lets do it!</string>
+    <string name="refreshing">Refreshing..</string>
 </resources>

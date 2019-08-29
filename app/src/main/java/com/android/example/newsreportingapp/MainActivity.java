@@ -1,29 +1,11 @@
 package com.android.example.newsreportingapp;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
+import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.android.example.newsreportingapp.ReminderUtils.SettingPeriodicSync;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPager pager= findViewById(R.id.view_pager);
         pager.setAdapter(new NewsFragmentPagerAdapter(getSupportFragmentManager()));
+
+        SettingPeriodicSync.scheduleReminder(this);
 
 
     }
