@@ -8,7 +8,7 @@ Click on a news that interests you to read more about it(Internet connectivity r
 
 Reference Images for the app-->
 
-<img src= "/img/ezgif.com-gif-maker.gif" height="40%" width="40%"/>
+<img src= "{{site.url}}/img/ezgif.com-gif-maker.gif" height="40%" width="40%"/>
 <img src= "/img/ezgif.com-gif-maker(1).gif" height="40%" width="40%"/>
 <img src= "/img/ezgif.com-optimize.gif" height="40%" width="40%"/>
 
