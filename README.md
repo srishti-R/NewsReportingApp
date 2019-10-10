@@ -8,9 +8,9 @@ Click on a news that interests you to read more about it(Internet connectivity r
 
 Reference Images for the app-->
 
-<img src= "https://github.com/srishti-R/srishti-R.github.io/blob/master/img/ezgif.com-gif-maker.gif" height="40%" width="40%"/>
-<img src= "https://github.com/srishti-R/srishti-R.github.io/blob/master/img/ezgif.com-gif-maker(1).gif" height="40%" width="40%"/>
-<img src= "https://github.com/srishti-R/srishti-R.github.io/blob/master/img/ezgif.com-optimize.gif" height="40%" width="40%"/>
+<img src= "https://github.com/srishti-R/srishti-R.github.io/blob/master/img/ezgif.com-gif-maker.gif" height="30%" width="30%"/>
+<img src= "https://github.com/srishti-R/srishti-R.github.io/blob/master/img/ezgif.com-gif-maker(1).gif" height="30%" width="30%"/>
+<img src= "https://github.com/srishti-R/srishti-R.github.io/blob/master/img/ezgif.com-optimize.gif" height="30%" width="30%"/>
 
 
 
